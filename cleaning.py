@@ -7,8 +7,8 @@ any rows with missing values, and any rows where the student was absent for all 
  birth_month, birth_year -> birthdate).
  - remove rows where assessments are all absent
  - remove rows with missing values
- - remove zscore, gender and syllabus
- - merge the dates to bday/bmonth/byear under birthdate
+ - remove zscore, gender and syllabus DONE!!!!!
+ - merge the dates to bday/bmonth/byear under birthdate DONE!!!
  '''
 
 
@@ -37,12 +37,47 @@ def remove_syllabus(data):
     data = data.drop("syllabus", axis=1)
     return data
 
+def birth_date(data):
+    '''combines the 3 columns under 1 column'''
+    month = {'January' : 1, 'February':2, 'March':3, 'April':4, 'May':5, 'June':6, 'July':7, 'August':8, \
+             'September': 9, 'October':10,'November':11,'December':12}
+    data.birth_month = data.birth_month.map(month)
+    data = data.assign(birthdate = data.birth_day.astype(str) + '/' + \
+                       data.birth_month.astype(str) + '/' + \
+                       data.birth_year.astype(str) )
+    data = data.drop("birth_day", axis=1)
+    data = data.drop("birth_month", axis=1)
+    data = data.drop("birth_year", axis=1)
+
+    return data
+
+def remove_birth_day(data):
+    data = data[data.birth_day != 'Invalid error']
+    data = data[data.birth_day != ' ']
+    ##data = data[data.birth_day > 31] #To remove days over 31
+    return data
+
+def remove_rows(data):
+    data = data[data.index != '-']
+    data = data[data.stream != '-']
+    data = data[data.sub1 != '-']
+    data = data[data.sub2 != '-']
+    data = data[data.sub3 != '-']
+    data = data[data.island_rank != '-']
+    data = data[data.district_rank != '-']
+    return data
+
+
+
 while True:
     df = read_csv("data.csv")
-    #raw_data = pd.read_csv("data.csv")
     df = remove_zscore(df)
     df = remove_gender(df)
     df = remove_syllabus(df)
+    df = remove_birth_day(df)
+    df = birth_date(df)
+    df = remove_rows(df)
+
 
     df.to_csv('clean_data.csv')
     break
