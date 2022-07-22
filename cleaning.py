@@ -67,6 +67,12 @@ def remove_rows(data):
     data = data[data.district_rank != '-']
     return data
 
+def remove_absent(data):
+
+    data = data.drop(data[(data['sub1_r'] == 'Absent') & (data['sub2_r'] == 'Absent') & (data['sub3_r'] == 'Absent') & (data['cgt_r'] == 'Absent') & (data['general_english_r'] == 'Absent')])
+    return data
+    #if data[data.sub1_r != 'Absent'] and data[data.sub2_r != 'Absent'] and data[data.sub3_r != 'Absent'] and data[data.cgt_r != 'Absent'] and data[data.general_english_r != 'Absent']:
+
 
 
 while True:
@@ -77,7 +83,7 @@ while True:
     df = remove_birth_day(df)
     df = birth_date(df)
     df = remove_rows(df)
-
+    df = remove_absent(df)
 
     df.to_csv('clean_data.csv')
     break
