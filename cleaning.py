@@ -1,4 +1,6 @@
 import csv
+import datetime
+
 import pandas as pd
 
 '''Read in the following file in python, transform it, and save it to a new file. The transformations should remove
@@ -74,12 +76,19 @@ def remove_absent(data):
     #if data[data.sub1_r != 'Absent'] and data[data.sub2_r != 'Absent'] and data[data.sub3_r != 'Absent'] and data[data.cgt_r != 'Absent'] and data[data.general_english_r != 'Absent']:
 
 
+def check_valid_date(data):
+    if data.birth_month == "February" and data.birth_year%4 == 0:
+        data = data.drop(data[(data['birth_day'] > 29)])
+    else:
+        pass
+    return data
 
 while True:
     df = read_csv("data.csv")
     df = remove_zscore(df)
     df = remove_gender(df)
     df = remove_syllabus(df)
+    df = check_valid_date(df)
     df = remove_birth_day(df)
     df = birth_date(df)
     df = remove_rows(df)
